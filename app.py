@@ -9,7 +9,7 @@ app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'shop.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'mark-shop-secret-key-2026'  # สำหรับ session
+app.config['SECRET_KEY'] = 'infinite-shop-secret-key-2026'  # สำหรับ session
 
 # สร้าง Database Instance
 db = SQLAlchemy(app)
@@ -23,6 +23,11 @@ class Product(db.Model):
     name = db.Column(db.String(120), nullable=False)
     price = db.Column(db.Float, nullable=False)
     image_url = db.Column(db.String(500), nullable=False)
+    discount = db.Column(db.Float, default=0)  # ส่วนลดเป็นเปอร์เซ็นต์ (0-100)
+    
+    def get_sale_price(self):
+        """คำนวณราคาหลังส่วนลด"""
+        return self.price * (1 - self.discount / 100)
     
     def to_dict(self):
         """แปลง Product object เป็น dictionary"""
@@ -30,7 +35,9 @@ class Product(db.Model):
             'id': self.id,
             'name': self.name,
             'price': self.price,
-            'image_url': self.image_url
+            'image_url': self.image_url,
+            'discount': self.discount,
+            'sale_price': self.get_sale_price() if self.discount > 0 else None
         }
     
     def __repr__(self):
@@ -177,6 +184,13 @@ def logout():
     return redirect(url_for('login'))
 
 
+@app.route('/sale')
+def sale():
+    """หน้าสินค้าลดราคา"""
+    products = Product.query.filter(Product.discount > 0).all()
+    return render_template('sale.html', products=products)
+
+
 @app.route('/admin/dashboard')
 def dashboard():
     """แดชบอร์ด Admin - แสดงรายการสินค้าทั้งหมด"""
@@ -253,44 +267,87 @@ def delete_product_admin(product_id):
 def seed_sample_data():
     """เพิ่มข้อมูลตัวอย่างลงใน Database ถ้าเป็นครั้งแรก"""
     with app.app_context():
-        # ตรวจสอบถ้ามีข้อมูลอยู่แล้วให้ข้าม
-        if Product.query.count() > 0:
-            print("✅ Database already has products. Skipping sample data insertion.")
-            return
-        
-        # ข้อมูลตัวอย่าง 4 ชิ้น
+        # ไม่ข้ามเมื่อมีข้อมูลอยู่เดิม เพราะเราต้องการเพิ่มรายการใหม่ที่ยังไม่มี
+        # (ฟังก์ชันจะตรวจสอบชื่อก่อนเพิ่ม)
+        # ข้อมูลตัวอย่างหลายรายการ (เพิ่มเติมจากเดิม)
         sample_products = [
             Product(
                 name="หูฟังไร้สาย Premium",
                 price=2490.00,
-                image_url="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=250&fit=crop"
+                image_url="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=250&fit=crop",
+                discount=15
             ),
             Product(
                 name="นาฬิกาสมาร์ทวอทช์",
                 price=4990.00,
-                image_url="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=250&fit=crop"
+                image_url="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=250&fit=crop",
+                discount=20
             ),
             Product(
                 name="กระเป๋า Camera Bag",
                 price=1890.00,
-                image_url="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=250&fit=crop"
+                image_url="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=250&fit=crop",
+                discount=10
             ),
             Product(
                 name="แว่นตากันแดด",
                 price=3290.00,
-                image_url="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=250&fit=crop"
+                image_url="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=250&fit=crop",
+                discount=25
+            ),
+            # สินค้าเพิ่มเติมตามคำขอ
+            Product(
+                name="กล้อง DSLR",
+                price=15900.00,
+                image_url="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=500&h=300&fit=crop&auto=format",
+                discount=30
+            ),
+            Product(
+                name="iPad Pro 12.9",
+                price=33900.00,
+                image_url="https://www.apple.com/newsroom/images/product/ipad/standard/Apple-iPad-10th-gen-hero-221018.jpg.og.jpg?202602120420",
+                discount=35
+            ),
+            Product(
+                name="iPhone 16 Pro Max",
+                price=45990.00,
+                image_url="https://www.apple.com/newsroom/images/2024/09/apple-debuts-iphone-16-pro-and-iphone-16-pro-max/article/Apple-iPhone-16-Pro-finish-lineup-240909_big.jpg.large.jpg",
+                discount=40
+            ),
+            Product(
+                name="Samsung S25 Ultra",
+                price=42990.00,
+                image_url="https://www.dxomark.com/wp-content/uploads/medias/post-181483/Samsung-Galaxy-S25-Ultra_featured-image-packshot-review.jpg",
+                discount=28
             )
         ]
         
         try:
-            # เพิ่มสินค้าไปยัง Database
-            db.session.add_all(sample_products)
-            db.session.commit()
-            
-            print("✅ Sample products inserted successfully!")
-            print(f"📦 Added {len(sample_products)} products to database:")
-            for product in sample_products:
-                print(f"   - {product.name} (฿{product.price:.2f})")
+            # เพิ่มสินค้าใหม่ตามชื่อถ้ายังไม่มีในฐาน
+            added = []
+            for item in sample_products:
+                existing = Product.query.filter_by(name=item.name).first()
+                if not existing:
+                    db.session.add(item)
+                    added.append(item)
+                else:
+                    # update URL/price if changed
+                    changed = False
+                    if existing.image_url != item.image_url:
+                        existing.image_url = item.image_url
+                        changed = True
+                    if existing.price != item.price:
+                        existing.price = item.price
+                        changed = True
+                    if changed:
+                        added.append(existing)  # treat as updated item for logging
+            if added:
+                db.session.commit()
+                print(f"✅ Sample products inserted/updated {len(added)} item(s):")
+                for product in added:
+                    print(f"   - {product.name} (฿{product.price:.2f})")
+            else:
+                print("✅ All sample products already exist and are up‑to‑date.")
         
         except Exception as e:
             db.session.rollback()
@@ -306,6 +363,13 @@ def init_db():
         print("✅ Database initialized successfully!")
         print(f"📁 Database file created: {os.path.abspath('shop.db')}")
         
+        # เพิ่มคอลัมน์ discount ถ้ายังไม่มี (migration)
+        try:
+            with db.engine.begin() as conn:
+                conn.execute(db.text("ALTER TABLE product ADD COLUMN discount FLOAT DEFAULT 0"))
+        except Exception:
+            pass  # column already exists
+        
         # เพิ่มข้อมูลตัวอย่างถ้า Database ว่างเปล่า
         seed_sample_data()
 
@@ -315,7 +379,7 @@ if __name__ == '__main__':
     init_db()
     
     # รัน Flask Development Server
-    print("\n🚀 Starting Mark Shop Server...")
+    print("\n🚀 Starting Infinite Shop Server...")
     print("📍 http://localhost:5000")
     print("💡 Press CTRL+C to stop the server\n")
     

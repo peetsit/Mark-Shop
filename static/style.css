@@ -1,0 +1,49 @@
+/* custom stylesheet loaded by templates */
+
+/* luxury dark/gold theme overrides */
+:root {
+    --card-bg: #2a2a2a;
+    --card-border: #444;
+    --btn-gradient: linear-gradient(135deg, #000 0%, #D4AF37 100%);
+}
+
+/* override hero background with the requested Unsplash image */
+.hero-section {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('https://images.unsplash.com/photo-1580910051070-5121f480d981?w=400&h=250&fit=crop&auto=format') center/cover no-repeat;
+}
+
+/* product cards */
+.product-card {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border);
+}
+.product-card .product-body {
+    color: white;
+}
+.product-card .product-price {
+    color: #D4AF37;
+    font-weight: 700;
+}
+
+/* gold buttons */
+.btn-add-cart, .btn-shop-now, .btn-add-product, .btn-success, .btn-login {
+    background: #D4AF37 !important;
+    color: white !important;
+    border: none;
+}
+
+/* footer tweaks */
+footer {
+    background: #111;
+    color: #ccc;
+}
+footer a {
+    color: #D4AF37;
+}
+
+/* override navbar gradient (if needed) */
+.navbar, .admin-navbar {
+    background: var(--btn-gradient) !important;
+}
+
