@@ -15,6 +15,17 @@ app.config['SECRET_KEY'] = 'infinite-shop-secret-key-2026'  # สำหรับ
 # สร้าง Database Instance
 db = SQLAlchemy(app)
 
+# Register Jinja2 filters and globals
+@app.template_filter('int')
+def to_int(value):
+    """Convert value to integer"""
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return 0
+
+app.jinja_env.filters['int'] = to_int
+
 # ===== Models (ตาราง Database) =====
 class Category(db.Model):
     """Model สำหรับตาราง Category"""
@@ -122,13 +133,25 @@ class Order(db.Model):
     customer_email = db.Column(db.String(120), nullable=False)
     customer_phone = db.Column(db.String(20), nullable=False)
     customer_address = db.Column(db.String(500), nullable=False)
-    payment_method = db.Column(db.String(50), nullable=False)  # credit_card, debit_card, bank_transfer, cash
+    payment_method = db.Column(db.String(50), nullable=False)  # credit_card, debit_card, promptpay, mobile_banking, bank_transfer, cod
     total_price = db.Column(db.Float, nullable=False)
-    status = db.Column(db.String(50), default='pending')  # pending, confirmed, shipped, delivered
+    status = db.Column(db.String(50), default='pending')  # pending, confirmed, shipped, delivered, cancelled
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationship
     items = db.relationship('OrderItem', backref='order', lazy=True, cascade='all, delete-orphan')
+    
+    def get_payment_method_display(self):
+        """ส่งกลับชื่อแสดงของวิธีการชำระเงิน"""
+        payment_methods = {
+            'credit_card': 'บัตรเครดิต',
+            'debit_card': 'บัตรเดบิต',
+            'promptpay': 'PromptPay',
+            'mobile_banking': 'Mobile Banking',
+            'bank_transfer': 'โอนธนาคาร',
+            'cod': 'เก็บเงินปลายทาง'
+        }
+        return payment_methods.get(self.payment_method, self.payment_method)
     
     def to_dict(self):
         return {

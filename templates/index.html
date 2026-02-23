@@ -513,7 +513,7 @@
                             </a>
                             <p class="product-description">{{ product.description or 'สินค้าคุณภาพดี' }}</p>
                             <div class="product-rating">
-                                {% for i in range(int(product.get_average_rating())) %}
+                                {% for i in range(product.get_average_rating()|int) %}
                                 <i class="fas fa-star"></i>
                                 {% endfor %}
                                 {% if (product.get_average_rating() % 1) >= 0.5 %}

@@ -306,6 +306,103 @@
                 </div>
             </div>
 
+            <!-- Payment Instructions -->
+            <div class="order-items" style="margin-top: 20px;">
+                <h6><i class="fas fa-credit-card"></i> วิธีการชำระเงิน</h6>
+                <div class="item-row">
+                    <span>วิธีการชำระ:</span>
+                    <strong style="color: var(--secondary-color);">
+                        {% if order.payment_method == 'credit_card' %}
+                            บัตรเครดิต
+                        {% elif order.payment_method == 'debit_card' %}
+                            บัตรเดบิต
+                        {% elif order.payment_method == 'promptpay' %}
+                            PromptPay
+                        {% elif order.payment_method == 'mobile_banking' %}
+                            Mobile Banking
+                        {% elif order.payment_method == 'bank_transfer' %}
+                            โอนธนาคาร
+                        {% elif order.payment_method == 'cod' %}
+                            เก็บเงินปลายทาง
+                        {% else %}
+                            {{ order.payment_method }}
+                        {% endif %}
+                    </strong>
+                </div>
+            </div>
+
+            <!-- Payment Details by Method -->
+            {% if order.payment_method == 'promptpay' %}
+            <div class="order-items" style="margin-top: 20px; border-left-color: #00AA44;">
+                <h6><i class="fas fa-mobile-alt"></i> ข้อมูล PromptPay</h6>
+                <div class="payment-info" style="color: var(--dark-color);">
+                    <p style="margin-bottom: 10px;">โปรดชำระเงินผ่าน PromptPay ด้วยสมาร์ทโฟนของท่าน:</p>
+                    <div class="bank-account" style="background-color: #3a3a3a; padding: 15px; border-radius: 6px;">
+                        <strong>PromptPay ID: 088-800-5555</strong><br>
+                        <strong>จำนวนเงิน: ฿{{ "%.2f"|format(order.total_price) }}</strong>
+                    </div>
+                    <p style="margin-top: 10px; color: #FFB800;">⏱️ โปรดชำระเงินภายใน 24 ชั่วโมง</p>
+                </div>
+            </div>
+            {% elif order.payment_method == 'mobile_banking' %}
+            <div class="order-items" style="margin-top: 20px; border-left-color: #0066CC;">
+                <h6><i class="fas fa-smartphone"></i> ข้อมูล Mobile Banking</h6>
+                <div class="payment-info" style="color: var(--dark-color);">
+                    <p style="margin-bottom: 10px;"><strong>ท่านสามารถโอนเงินผ่านแพ็ปโปรแกรม Mobile Banking ได้:</strong></p>
+                    <p style="margin-top: 10px;"><strong>ธนาคารไทยพาณิชย์ (SCB):</strong></p>
+                    <div class="bank-account" style="background-color: #3a3a3a; padding: 15px; border-radius: 6px;">
+                        เลขบัญชี: 123-456-7890<br>
+                        ชื่อบัญชี: Infinite Shop Co., Ltd.<br>
+                        <strong style="color: var(--secondary-color);">จำนวนเงิน: ฿{{ "%.2f"|format(order.total_price) }}</strong>
+                    </div>
+                    <p style="margin-top: 10px;">ธนาคารกรุงเทพ (BBL):</p>
+                    <div class="bank-account" style="background-color: #3a3a3a; padding: 15px; border-radius: 6px;">
+                        เลขบัญชี: 098-765-4321<br>
+                        ชื่อบัญชี: Infinite Shop Co., Ltd.<br>
+                        <strong style="color: var(--secondary-color);">จำนวนเงิน: ฿{{ "%.2f"|format(order.total_price) }}</strong>
+                    </div>
+                    <p style="margin-top: 10px; color: #FFB800;">⏱️ โปรดชำระเงินและส่งสลิปภายใน 24 ชั่วโมง</p>
+                </div>
+            </div>
+            {% elif order.payment_method == 'bank_transfer' %}
+            <div class="order-items" style="margin-top: 20px; border-left-color: #FF7700;">
+                <h6><i class="fas fa-building"></i> ข้อมูลโอนธนาคาร</h6>
+                <div class="payment-info" style="color: var(--dark-color);">
+                    <p style="margin-bottom: 10px;"><strong>โปรดโอนเงินไปยังบัญชีต่อไปนี้:</strong></p>
+                    <p style="margin-top: 10px;">ธนาคารกสิกรไทย (KBANK):</p>
+                    <div class="bank-account" style="background-color: #3a3a3a; padding: 15px; border-radius: 6px;">
+                        เลขบัญชี: 567-890-1234<br>
+                        ชื่อบัญชี: Infinite Shop Co., Ltd.<br>
+                        สาขา: สาทร<br>
+                        <strong style="color: var(--secondary-color);">จำนวนเงิน: ฿{{ "%.2f"|format(order.total_price) }}</strong>
+                    </div>
+                    <p style="margin-top: 10px;">ธนาคารไทยพาณิชย์ (SCB):</p>
+                    <div class="bank-account" style="background-color: #3a3a3a; padding: 15px; border-radius: 6px;">
+                        เลขบัญชี: 345-678-9012<br>
+                        ชื่อบัญชี: Infinite Shop Co., Ltd.<br>
+                        <strong style="color: var(--secondary-color);">จำนวนเงิน: ฿{{ "%.2f"|format(order.total_price) }}</strong>
+                    </div>
+                    <p style="margin-top: 10px; color: #FFB800;">⏱️ โปรดโอนเงินภายใน 24 ชั่วโมง และส่งหลักฐานการโอนเงินมายังลูกค้าสัมพันธ์</p>
+                </div>
+            </div>
+            {% elif order.payment_method == 'cod' %}
+            <div class="order-items" style="margin-top: 20px; border-left-color: #27AE60;">
+                <h6><i class="fas fa-box"></i> เก็บเงินปลายทาง</h6>
+                <div class="payment-info" style="color: var(--dark-color);">
+                    <p><i class="fas fa-check-circle" style="color: #27AE60;"></i> <strong>ท่านจะชำระเงินให้พนักงานขนส่งเมื่อสินค้าถึงมือ</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>พนักงานขนส่งจะนำสินค้าให้ท่านก่อน เพื่อตรวจสอบ</li>
+                        <li>ท่านสามารถชำระเงินผ่านบัตรเดบิต โอนธนาคาร หรือเงินสด</li>
+                        <li>พนักงานขนส่งจะออกใบเสร็จให้ท่าน</li>
+                    </ul>
+                    <div class="bank-account" style="background-color: #3a3a3a; padding: 15px; border-radius: 6px; margin-top: 10px;">
+                        <strong>ค่าขนส่ง: ฿50.00</strong><br>
+                        <strong style="color: var(--secondary-color);">ยอดเงินทั้งสิ้น: ฿{{ "%.2f"|format(order.total_price + 50) }}</strong>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
             <!-- หมายเหตุ -->
             <div class="note">
                 <i class="fas fa-info-circle"></i>

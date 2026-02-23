@@ -130,6 +130,54 @@
             border-color: var(--secondary-color);
         }
 
+        /* Payment Details */
+        .payment-details {
+            display: none;
+            background-color: #3a3a3a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .payment-details.show {
+            display: block;
+        }
+
+        .payment-details h6 {
+            color: var(--secondary-color);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .payment-info {
+            color: var(--dark-color);
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .bank-account {
+            background-color: #2a2a2a;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .qr-code-placeholder {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .qr-code-placeholder i {
+            font-size: 48px;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
         .cart-summary {
             background: #2a2a2a;
             border-radius: 10px;
@@ -288,32 +336,149 @@
                         <h5><i class="fas fa-credit-card"></i> วิธีการชำระเงิน</h5>
                         <div class="payment-options">
                             <div class="payment-option">
-                                <input type="radio" id="creditCard" name="payment_method" value="credit_card" required>
+                                <input type="radio" id="creditCard" name="payment_method" value="credit_card" required onchange="showPaymentDetails('credit_card')">
                                 <label for="creditCard">
                                     <i class="fas fa-credit-card"></i><br>
                                     บัตรเครดิต
                                 </label>
                             </div>
                             <div class="payment-option">
-                                <input type="radio" id="debitCard" name="payment_method" value="debit_card">
+                                <input type="radio" id="debitCard" name="payment_method" value="debit_card" onchange="showPaymentDetails('debit_card')">
                                 <label for="debitCard">
                                     <i class="fas fa-credit-card"></i><br>
                                     บัตรเดบิต
                                 </label>
                             </div>
                             <div class="payment-option">
-                                <input type="radio" id="bankTransfer" name="payment_method" value="bank_transfer">
+                                <input type="radio" id="promptpay" name="payment_method" value="promptpay" onchange="showPaymentDetails('promptpay')">
+                                <label for="promptpay">
+                                    <i class="fas fa-mobile-alt"></i><br>
+                                    PromptPay
+                                </label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" id="mobileBanking" name="payment_method" value="mobile_banking" onchange="showPaymentDetails('mobile_banking')">
+                                <label for="mobileBanking">
+                                    <i class="fas fa-smartphone"></i><br>
+                                    Mobile Banking
+                                </label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" id="bankTransfer" name="payment_method" value="bank_transfer" onchange="showPaymentDetails('bank_transfer')">
                                 <label for="bankTransfer">
                                     <i class="fas fa-building"></i><br>
                                     โอนธนาคาร
                                 </label>
                             </div>
                             <div class="payment-option">
-                                <input type="radio" id="cash" name="payment_method" value="cash">
-                                <label for="cash">
-                                    <i class="fas fa-money-bill"></i><br>
-                                    เงินสด
+                                <input type="radio" id="cod" name="payment_method" value="cod" onchange="showPaymentDetails('cod')">
+                                <label for="cod">
+                                    <i class="fas fa-box"></i><br>
+                                    เก็บเงินปลายทาง
                                 </label>
+                            </div>
+                        </div>
+
+                        <!-- Payment Details by Method -->
+                        <div id="payment-details-credit_card" class="payment-details">
+                            <h6><i class="fas fa-credit-card"></i> รายละเอียดการชำระเงินด้วยบัตรเครดิต</h6>
+                            <div class="payment-info">
+                                <p>กรุณาเตรียมข้อมูลบัตรเครดิตของคุณ:</p>
+                                <ul style="margin-left: 20px;">
+                                    <li>เลขที่บัตรเครดิต (16 หลัก)</li>
+                                    <li>ชื่อผู้ถือบัตร</li>
+                                    <li>วันหมดอายุ</li>
+                                    <li>รหัส CVV 3 หลัก</li>
+                                </ul>
+                                <p style="margin-top: 10px; color: #FFB800;">💳 ระบบของเรามีการเข้ารหัสความปลอดภัย SSL ตามมาตรฐานสากล</p>
+                            </div>
+                        </div>
+
+                        <div id="payment-details-debit_card" class="payment-details">
+                            <h6><i class="fas fa-credit-card"></i> รายละเอียดการชำระเงินด้วยบัตรเดบิต</h6>
+                            <div class="payment-info">
+                                <p>กรุณาเตรียมข้อมูลบัตรเดบิตของคุณ:</p>
+                                <ul style="margin-left: 20px;">
+                                    <li>เลขที่บัตรเดบิต (16 หลัก)</li>
+                                    <li>ชื่อผู้ถือบัตร</li>
+                                    <li>วันหมดอายุ</li>
+                                    <li>รหัส CVV 3 หลัก</li>
+                                </ul>
+                                <p style="margin-top: 10px; color: #FFB800;">✓ ยอดเงินจะหักจากบัญชีของท่านทันที</p>
+                            </div>
+                        </div>
+
+                        <div id="payment-details-promptpay" class="payment-details">
+                            <h6><i class="fas fa-mobile-alt"></i> PromptPay QR Code</h6>
+                            <div class="payment-info">
+                                <p>เลือกชำระเงินด้วย PromptPay ผ่าน Mobile Banking ของคุณ:</p>
+                                <div class="qr-code-placeholder">
+                                    <i class="fas fa-qrcode"></i>
+                                    <p style="margin-top: 10px;">QR Code จะแสดงผลหลังจากยืนยันคำสั่งซื้อ</p>
+                                </div>
+                                <div class="payment-info" style="margin-top: 10px;">
+                                    <strong>PromptPay ID:</strong>
+                                    <div class="bank-account">088-800-5555 (โทรศัพท์)</div>
+                                </div>
+                                <p style="margin-top: 10px; color: #FFB800;">⏱️ โปรดชำระเงินภายใน 24 ชั่วโมง</p>
+                            </div>
+                        </div>
+
+                        <div id="payment-details-mobile_banking" class="payment-details">
+                            <h6><i class="fas fa-smartphone"></i> Mobile Banking</h6>
+                            <div class="payment-info">
+                                <p>ท่านสามารถชำระเงินผ่าน Mobile Banking ได้:</p>
+                                <div style="margin-top: 10px;">
+                                    <p><strong>ธนาคารไทยพาณิชย์ (SCB):</strong></p>
+                                    <div class="bank-account">
+                                        เลขบัญชี: 123-456-7890<br>
+                                        ชื่อบัญชี: Infinite Shop Co., Ltd.
+                                    </div>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <p><strong>ธนาคารกรุงเทพ (BBL):</strong></p>
+                                    <div class="bank-account">
+                                        เลขบัญชี: 098-765-4321<br>
+                                        ชื่อบัญชี: Infinite Shop Co., Ltd.
+                                    </div>
+                                </div>
+                                <p style="margin-top: 10px; color: #FFB800;">⏱️ โปรดชำระเงินและส่งสลิปภายใน 24 ชั่วโมง</p>
+                            </div>
+                        </div>
+
+                        <div id="payment-details-bank_transfer" class="payment-details">
+                            <h6><i class="fas fa-building"></i> โอนธนาคาร</h6>
+                            <div class="payment-info">
+                                <p>โปรดโอนเงินไปยังบัญชีต่อไปนี้:</p>
+                                <div style="margin-top: 10px;">
+                                    <p><strong>ธนาคารกสิกรไทย (KBANK):</strong></p>
+                                    <div class="bank-account">
+                                        เลขบัญชี: 567-890-1234<br>
+                                        ชื่อบัญชี: Infinite Shop Co., Ltd.<br>
+                                        สาขา: สาทร
+                                    </div>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <p><strong>ธนาคารไทยพาณิชย์ (SCB):</strong></p>
+                                    <div class="bank-account">
+                                        เลขบัญชี: 345-678-9012<br>
+                                        ชื่อบัญชี: Infinite Shop Co., Ltd.
+                                    </div>
+                                </div>
+                                <p style="margin-top: 10px; color: #FFB800;">⏱️ โปรดโอนเงินภายใน 24 ชั่วโมง และอย่าลืมส่งสลิปไว้เป็นหลักฐาน</p>
+                            </div>
+                        </div>
+
+                        <div id="payment-details-cod" class="payment-details">
+                            <h6><i class="fas fa-box"></i> เก็บเงินปลายทาง (Cash on Delivery)</h6>
+                            <div class="payment-info">
+                                <p>ท่านสามารถชำระเงินให้กับพนักงานขนส่งเมื่อสินค้าถึงมือท่าน:</p>
+                                <ul style="margin-left: 20px;">
+                                    <li>พนักงานขนส่งจะนำอย่างไรให้ท่านก่อน เพื่อตรวจสอบสินค้า</li>
+                                    <li>ท่านสามารถเลือกชำระเงินผ่านบัตรเดบิต เงินสด หรือ Mobile Banking</li>
+                                    <li>พนักงานขนส่งจะออกใบเสร็จให้ท่าน</li>
+                                </ul>
+                                <p style="margin-top: 10px; color: #FFB800;">🚚 ค่าขนส่ง: 50 บาท (ทั่วประเทศ)</p>
                             </div>
                         </div>
                     </div>
@@ -370,6 +535,18 @@
 
             document.getElementById('totalPrice').textContent = `฿${total.toFixed(2)}`;
             cartDataInput.value = JSON.stringify(cart);
+        }
+
+        function showPaymentDetails(method) {
+            // Hide all payment details
+            const allDetails = document.querySelectorAll('.payment-details');
+            allDetails.forEach(detail => detail.classList.remove('show'));
+            
+            // Show selected payment details
+            const selectedDetails = document.getElementById(`payment-details-${method}`);
+            if (selectedDetails) {
+                selectedDetails.classList.add('show');
+            }
         }
 
         // โหลดตะกร้าเมื่อหน้าเปิด
