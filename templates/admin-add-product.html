@@ -315,6 +315,39 @@
                     <div class="help-text">ราคาต้องเป็นตัวเลข</div>
                 </div>
 
+                <!-- Category -->
+                <div class="form-group">
+                    <label for="category_id">
+                        <i class="fas fa-tags"></i> หมวดหมู่
+                    </label>
+                    <select 
+                        id="category_id" 
+                        name="category_id"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;"
+                    >
+                        <option value="">-- เลือกหมวดหมู่ (ไม่บังคับ) --</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="help-text">เลือกหมวดหมู่ที่เหมาะสมกับสินค้า</div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description">
+                        <i class="fas fa-align-left"></i> รายละเอียด
+                    </label>
+                    <textarea 
+                        id="description" 
+                        name="description" 
+                        placeholder="บรรยายสินค้า"
+                        rows="4"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; font-family: inherit;"
+                    ></textarea>
+                    <div class="help-text">รายละเอียดเกี่ยวกับสินค้า</div>
+                </div>
+
                 <!-- Image URL -->
                 <div class="form-group">
                     <label for="image_url">

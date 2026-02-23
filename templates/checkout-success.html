@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำสั่งซื้อสำเร็จ - Infinite Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #D4AF37;
+            --dark-color: #FFFFFF;
+            --light-color: #1A1A1A;
+            --success-color: #27AE60;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-size: 28px;
+            font-weight: 700;
+            color: white !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-container {
+            padding: 60px 0;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .success-card {
+            background: #2a2a2a;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 40px;
+            color: white;
+            animation: scaleIn 0.5s ease-in-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .success-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            font-size: 18px;
+            color: var(--dark-color);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .order-details {
+            background-color: #3a3a3a;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #555;
+            color: var(--dark-color);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .order-items {
+            background-color: #3a3a3a;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .order-items h6 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            color: var(--dark-color);
+            border-bottom: 1px solid #555;
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-home {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #c5970f 100%);
+            color: #000;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-continue {
+            background-color: transparent;
+            color: var(--secondary-color);
+            border: 2px solid var(--secondary-color);
+        }
+
+        .btn-continue:hover {
+            background-color: var(--secondary-color);
+            color: #000;
+        }
+
+        .note {
+            background-color: #3a3a3a;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            color: var(--dark-color);
+        }
+
+        @media (max-width: 768px) {
+            .success-container {
+                padding: 30px 0;
+            }
+
+            .success-card {
+                padding: 25px;
+            }
+
+            .success-title {
+                font-size: 24px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-action {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-lg">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-shop"></i> Infinite Shop
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">หน้าแรก</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cart') }}">ตะกร้า</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-lg success-container">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+
+            <h1 class="success-title">คำสั่งซื้อสำเร็จ!</h1>
+            <p class="success-message">
+                ขอบคุณที่ใช้บริการ Infinite Shop<br>
+                เราจะประมวลผลคำสั่งซื้อของคุณในเร็ว ๆ นี้
+            </p>
+
+            <!-- รายละเอียดคำสั่งซื้อ -->
+            <div class="order-details">
+                <div class="detail-item">
+                    <span class="detail-label">เลขที่คำสั่งซื้อ:</span>
+                    <span>#{{ order.id }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">ผู้ซื้อ:</span>
+                    <span>{{ order.customer_name }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">อีเมล:</span>
+                    <span>{{ order.customer_email }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">เบอร์โทร:</span>
+                    <span>{{ order.customer_phone }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">วิธีการชำระเงิน:</span>
+                    <span>
+                        {% if order.payment_method == 'credit_card' %}
+                            บัตรเครดิต
+                        {% elif order.payment_method == 'debit_card' %}
+                            บัตรเดบิต
+                        {% elif order.payment_method == 'bank_transfer' %}
+                            โอนธนาคาร
+                        {% else %}
+                            เงินสด
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">สถานะ:</span>
+                    <span style="color: #F39C12;">{{ order.status }}</span>
+                </div>
+            </div>
+
+            <!-- รายการสินค้า -->
+            <div class="order-items">
+                <h6><i class="fas fa-boxes"></i> รายการสินค้า</h6>
+                {% for item in order.items %}
+                <div class="item-row">
+                    <span>{{ item.product_name }} x{{ item.quantity }}</span>
+                    <span>฿{{ "%.2f"|format(item.quantity * item.price) }}</span>
+                </div>
+                {% endfor %}
+                <div class="item-row" style="border-top: 2px solid var(--secondary-color); margin-top: 10px; padding-top: 10px;">
+                    <strong>ยอดรวม:</strong>
+                    <strong style="color: var(--secondary-color);">฿{{ "%.2f"|format(order.total_price) }}</strong>
+                </div>
+            </div>
+
+            <!-- หมายเหตุ -->
+            <div class="note">
+                <i class="fas fa-info-circle"></i>
+                <strong> หมายเหตุ:</strong> เราจะส่งอีเมลยืนยันไปที่ {{ order.customer_email }} 
+                ติดตามสถานะการจัดส่งได้ผ่านอีเมลหรือโทรศัพท์ที่ลงทะเบียน
+            </div>
+
+            <!-- ปุ่มดำเนินการ -->
+            <div class="action-buttons">
+                <a href="{{ url_for('index') }}" class="btn-action btn-home">
+                    <i class="fas fa-home"></i> กลับไปหน้าแรก
+                </a>
+                <a href="{{ url_for('cart') }}" class="btn-action btn-continue">
+                    <i class="fas fa-shopping-cart"></i> ซื้อของต่อ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ลบตะกร้าจาก localStorage หลังจากสั่งซื้อสำเร็จ
+        localStorage.removeItem('cart');
+    </script>
+</body>
+</html>

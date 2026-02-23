@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Infinite Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #D4AF37;
+            --dark-color: #FFFFFF;
+            --light-color: #1A1A1A;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-size: 28px;
+            font-weight: 700;
+            color: white !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .product-container {
+            padding: 40px 0;
+            min-height: 80vh;
+        }
+
+        .product-image {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+            max-height: 500px;
+            background-color: #2a2a2a;
+        }
+
+        .product-info {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            height: 100%;
+        }
+
+        .product-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+
+        .product-category {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: #000;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stars {
+            color: var(--secondary-color);
+            font-size: 18px;
+        }
+
+        .review-count {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .price-section {
+            margin: 20px 0;
+            padding: 20px 0;
+            border-top: 1px solid #444;
+            border-bottom: 1px solid #444;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 18px;
+            margin-right: 10px;
+        }
+
+        .current-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .discount-badge {
+            display: inline-block;
+            background-color: #E74C3C;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .quantity-selector input {
+            width: 60px;
+            padding: 8px;
+            background-color: #3a3a3a;
+            border: 1px solid #555;
+            color: var(--dark-color);
+            text-align: center;
+        }
+
+        .btn-add-cart {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #c5970f 100%);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+
+        .btn-add-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(212, 175, 55, 0.3);
+        }
+
+        .description {
+            background: #3a3a3a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            margin-top: 40px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .review-form {
+            background: #2a2a2a;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            color: var(--dark-color);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            background-color: #3a3a3a;
+            border: 1px solid #555;
+            color: var(--dark-color);
+        }
+
+        .form-control:focus {
+            background-color: #3a3a3a;
+            border-color: var(--secondary-color);
+            color: var(--dark-color);
+            box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .star {
+            font-size: 30px;
+            color: #555;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: var(--secondary-color);
+        }
+
+        .btn-submit-review {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #c5970f 100%);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit-review:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .reviews-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .review-item {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .review-name {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .review-rating {
+            color: var(--secondary-color);
+            font-size: 14px;
+        }
+
+        .review-date {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .review-comment {
+            color: var(--dark-color);
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .no-reviews {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            color: #999;
+        }
+
+        .alert {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .product-name {
+                font-size: 22px;
+            }
+
+            .current-price {
+                font-size: 24px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-lg">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-shop"></i> Infinite Shop
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">หน้าแรก</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cart') }}">ตะกร้า</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-lg product-container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" style="margin-bottom: 20px;">
+            <ol class="breadcrumb" style="background-color: transparent;">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" style="color: var(--secondary-color);">หน้าแรก</a></li>
+                {% if product.category %}
+                <li class="breadcrumb-item"><a href="{{ url_for('category_filter', category_name=product.category.name) }}" style="color: var(--secondary-color);">{{ product.category.name }}</a></li>
+                {% endif %}
+                <li class="breadcrumb-item active" style="color: var(--dark-color);">{{ product.name }}</li>
+            </ol>
+        </nav>
+
+        <!-- Product Details -->
+        <div class="row">
+            <div class="col-lg-6">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+            </div>
+
+            <div class="col-lg-6">
+                <div class="product-info">
+                    {% if product.category %}
+                    <div class="product-category">{{ product.category.name }}</div>
+                    {% endif %}
+
+                    <h1 class="product-name">{{ product.name }}</h1>
+
+                    <!-- Rating -->
+                    <div class="rating">
+                        <div class="stars">
+                            {% for i in range(int(product.get_average_rating())) %}
+                            <i class="fas fa-star"></i>
+                            {% endfor %}
+                            {% if (product.get_average_rating() % 1) >= 0.5 %}
+                            <i class="fas fa-star-half-alt"></i>
+                            {% endif %}
+                        </div>
+                        <span class="review-count">({{ product.get_review_count() }} รีวิว)</span>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="price-section">
+                        {% if product.discount > 0 %}
+                        <span class="original-price">฿{{ "%.2f"|format(product.price) }}</span>
+                        <span class="current-price">฿{{ "%.2f"|format(product.get_sale_price()) }}</span>
+                        <span class="discount-badge">ลด {{ product.discount }}%</span>
+                        {% else %}
+                        <span class="current-price">฿{{ "%.2f"|format(product.price) }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Description -->
+                    {% if product.description %}
+                    <div class="description">
+                        {{ product.description }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Quantity Selector -->
+                    <div class="quantity-selector">
+                        <label for="quantity">จำนวน:</label>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="decreaseQuantity()">-</button>
+                        <input type="number" id="quantity" value="1" min="1">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="increaseQuantity()">+</button>
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                    <button type="button" class="btn-add-cart" onclick="addToCart()">
+                        <i class="fas fa-shopping-cart"></i> เพิ่มลงตะกร้า
+                    </button>
+
+                    <div id="cartMessage"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <h2 class="section-title"><i class="fas fa-comments"></i> รีวิวและคะแนน</h2>
+
+            <!-- Review Form -->
+            <div class="review-form">
+                <h5 style="color: var(--secondary-color); margin-bottom: 20px;">เพิ่มรีวิวของคุณ</h5>
+                
+                <div class="form-group">
+                    <label for="reviewName">ชื่อ *</label>
+                    <input type="text" id="reviewName" class="form-control" placeholder="เบื้องหลังชื่อของคุณ">
+                </div>
+
+                <div class="form-group">
+                    <label>คะแนน (1-5 ดาว) *</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" onclick="setRating(1)">★</span>
+                        <span class="star" onclick="setRating(2)">★</span>
+                        <span class="star" onclick="setRating(3)">★</span>
+                        <span class="star" onclick="setRating(4)">★</span>
+                        <span class="star" onclick="setRating(5)">★</span>
+                    </div>
+                    <input type="hidden" id="rating" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewComment">ความคิดเห็น</label>
+                    <textarea id="reviewComment" class="form-control" rows="4" placeholder="บอกเราเกี่ยวกับสินค้านี้"></textarea>
+                </div>
+
+                <button type="button" class="btn-submit-review" onclick="submitReview()">
+                    <i class="fas fa-paper-plane"></i> ส่งรีวิว
+                </button>
+            </div>
+
+            <!-- Reviews List -->
+            <div id="reviewsList">
+                {% if reviews %}
+                <div class="reviews-list">
+                    {% for review in reviews %}
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div>
+                                <div class="review-name">{{ review.customer_name }}</div>
+                                <div class="review-rating">
+                                    {% for i in range(review.rating) %}
+                                    <i class="fas fa-star"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="review-date">{{ review.created_at }}</div>
+                        </div>
+                        {% if review.comment %}
+                        <div class="review-comment">{{ review.comment }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-reviews">
+                    <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 10px; display: block;"></i>
+                    ยังไม่มีรีวิวสำหรับสินค้านี้ เป็นคนแรกที่ให้รีวิว!
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedRating = 0;
+
+        function increaseQuantity() {
+            const quantity = document.getElementById('quantity');
+            quantity.value = parseInt(quantity.value) + 1;
+        }
+
+        function decreaseQuantity() {
+            const quantity = document.getElementById('quantity');
+            if (parseInt(quantity.value) > 1) {
+                quantity.value = parseInt(quantity.value) - 1;
+            }
+        }
+
+        function addToCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const messageDiv = document.getElementById('cartMessage');
+
+            const product = {
+                id: {{ product.id }},
+                name: '{{ product.name }}',
+                price: {{ product.get_sale_price() if product.discount > 0 else product.price }},
+                image: '{{ product.image_url }}',
+                quantity: quantity
+            };
+
+            // ตรวจสอบว่ามีสินค้านี้อยู่แล้ว
+            const existingProduct = cart.find(item => item.id === product.id);
+            if (existingProduct) {
+                existingProduct.quantity += quantity;
+            } else {
+                cart.push(product);
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // แสดงข้อความสำเร็จ
+            messageDiv.innerHTML = '<div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle"></i> เพิ่มลงตะกร้าเรียบร้อย <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        function setRating(rating) {
+            selectedRating = rating;
+            document.getElementById('rating').value = rating;
+            
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function submitReview() {
+            const name = document.getElementById('reviewName').value.trim();
+            const rating = parseInt(document.getElementById('rating').value);
+            const comment = document.getElementById('reviewComment').value.trim();
+
+            if (!name) {
+                alert('กรุณากรอกชื่อ');
+                return;
+            }
+
+            if (rating === 0) {
+                alert('กรุณาเลือกคะแนน');
+                return;
+            }
+
+            fetch('/api/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product_id: {{ product.id }},
+                    customer_name: name,
+                    rating: rating,
+                    comment: comment
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert('รีวิวถูกเพิ่มสำเร็จ');
+                    // โหลดหน้าใหม่เพื่ออัปเดตรีวิว
+                    location.reload();
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

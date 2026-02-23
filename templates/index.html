@@ -468,38 +468,84 @@
     <!-- Products Section -->
     <section class="products-section" id="products">
         <div class="container">
-            <h2 class="section-title">สินค้าแนะนำ</h2>
+            <h2 class="section-title">
+                {% if selected_category %}
+                    หมวดหมู่: {{ selected_category }}
+                {% else %}
+                    สินค้าแนะนำ
+                {% endif %}
+            </h2>
             
+            <!-- Category Filters -->
+            <div style="margin-bottom: 30px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="{{ url_for('index') }}" class="btn {% if not selected_category %}btn-primary{% else %}btn-outline-secondary{% endif %}" style="border-color: var(--secondary-color); color: {% if not selected_category %}white; background: var(--secondary-color);{% else %}var(--secondary-color);{% endif %}">
+                    <i class="fas fa-th"></i> ทั้งหมด
+                </a>
+                {% for category in categories %}
+                <a href="{{ url_for('category_filter', category_name=category.name) }}" class="btn {% if selected_category == category.name %}btn-primary{% else %}btn-outline-secondary{% endif %}" style="border-color: var(--secondary-color); color: {% if selected_category == category.name %}white; background: var(--secondary-color);{% else %}var(--secondary-color);{% endif %}">
+                    <i class="fas fa-tag"></i> {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+            
+            {% if products %}
             <div class="row g-4">
                 {% for product in products %}
                 <!-- Product Card - {{ product.id }} -->
                 <div class="col-lg-3 col-md-6">
                     <div class="product-card">
-                        <div style="position: relative;">
-                            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
-                            <span class="product-badge">New</span>
-                        </div>
-                        <div class="product-body">
-                            <p class="product-category">Featured Product</p>
-                            <h5 class="product-name">{{ product.name }}</h5>
-                            <p class="product-description">สินค้าคุณภาพดี มาจากฐานข้อมูล Infinite Shop</p>
-                            <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                                <span>(0 รีวิว)</span>
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" style="text-decoration: none; color: inherit;">
+                            <div style="position: relative; cursor: pointer;">
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                                {% if product.discount > 0 %}
+                                <span class="product-badge">-{{ product.discount}}%</span>
+                                {% else %}
+                                <span class="product-badge">New</span>
+                                {% endif %}
                             </div>
-                            <div class="product-price">฿{{ "%.2f"|format(product.price) }}</div>
-                            <button class="btn-add-cart" onclick="addToCart({{ product.id }}, '{{ product.name }}', {{ product.price }}, '{{ product.image_url }}')">
+                        </a>
+                        <div class="product-body">
+                            {% if product.category %}
+                            <p class="product-category">{{ product.category.name }}</p>
+                            {% endif %}
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" style="text-decoration: none; color: inherit;">
+                                <h5 class="product-name">{{ product.name }}</h5>
+                            </a>
+                            <p class="product-description">{{ product.description or 'สินค้าคุณภาพดี' }}</p>
+                            <div class="product-rating">
+                                {% for i in range(int(product.get_average_rating())) %}
+                                <i class="fas fa-star"></i>
+                                {% endfor %}
+                                {% if (product.get_average_rating() % 1) >= 0.5 %}
+                                <i class="fas fa-star-half-alt"></i>
+                                {% endif %}
+                                <span>({{ product.get_review_count() }} รีวิว)</span>
+                            </div>
+                            <div class="product-price">
+                                {% if product.discount > 0 %}
+                                <span style="text-decoration: line-through; color: #999; margin-right: 10px;">฿{{ "%.2f"|format(product.price) }}</span>
+                                ฿{{ "%.2f"|format(product.get_sale_price()) }}
+                                {% else %}
+                                ฿{{ "%.2f"|format(product.price) }}
+                                {% endif %}
+                            </div>
+                            <button class="btn-add-cart" onclick="addToCart({{ product.id }}, '{{ product.name }}', {{ product.get_sale_price() if product.discount > 0 else product.price }}, '{{ product.image_url }}')">
                                 <i class="fas fa-cart-plus"></i> เพิ่มลงตะกร้า
                             </button>
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" style="display: block; text-align: center; margin-top: 8px; color: var(--secondary-color); text-decoration: none; font-weight: 600; font-size: 12px;">
+                                <i class="fas fa-eye"></i> ดูรีวิว
+                            </a>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <div style="text-align: center; padding: 40px; color: #999;">
+                <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; display: block;"></i>
+                ไม่พบสินค้าในหมวดหมู่นี้
+            </div>
+            {% endif %}
         </div>
     </section>
 

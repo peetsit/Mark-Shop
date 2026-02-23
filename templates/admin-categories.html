@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการหมวดหมู่ - Admin Infinite Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #D4AF37;
+            --dark-color: #FFFFFF;
+            --light-color: #1A1A1A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .dashboard-wrapper {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            color: var(--secondary-color);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            color: var(--dark-color);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: var(--secondary-color);
+            color: #000;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #c5970f 100%);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Form */
+        .add-category-form {
+            background: #2a2a2a;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-category-form h5 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group label {
+            color: var(--dark-color);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            background-color: #3a3a3a;
+            border: 1px solid #555;
+            color: var(--dark-color);
+            padding: 10px 15px;
+            border-radius: 6px;
+        }
+
+        .form-control:focus {
+            background-color: #3a3a3a;
+            border-color: var(--secondary-color);
+            color: var(--dark-color);
+            box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: #999;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #c5970f 100%);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Categories Table */
+        .categories-table-wrapper {
+            background: #2a2a2a;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .table {
+            margin-bottom: 0;
+            color: var(--dark-color);
+        }
+
+        .table thead {
+            background-color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .table thead th {
+            font-weight: 600;
+            color: var(--secondary-color);
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #444;
+            transition: background-color 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: #3a3a3a;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .category-badge {
+            background-color: var(--secondary-color);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-delete {
+            background-color: #E74C3C;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-delete:hover {
+            background-color: #C0392B;
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .alert {
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-wrapper {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                display: flex;
+                gap: 20px;
+                overflow-x: auto;
+                padding: 15px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .table {
+                font-size: 12px;
+            }
+
+            .table th,
+            .table td {
+                padding: 10px 5px;
+            }
+
+            .btn-delete {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-shop"></i> Infinite Shop Admin
+            </div>
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="{{ url_for('dashboard') }}">
+                        <i class="fas fa-chart-line"></i> แดชบอร์ด
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('dashboard') }}">
+                        <i class="fas fa-box"></i> สินค้า
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('manage_categories') }}" class="active">
+                        <i class="fas fa-tags"></i> หมวดหมู่
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('add_product_admin') }}">
+                        <i class="fas fa-plus-circle"></i> เพิ่มสินค้า
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title"><i class="fas fa-tags"></i> จัดการหมวดหมู่</h1>
+            </div>
+
+            <!-- Error/Success Messages -->
+            {% if error %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endif %}
+
+            {% if message %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endif %}
+
+            <!-- Add Category Form -->
+            <div class="add-category-form">
+                <h5><i class="fas fa-plus"></i> เพิ่มหมวดหมู่ใหม่</h5>
+                <form method="POST" action="{{ url_for('add_category') }}">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">ชื่อหมวดหมู่ *</label>
+                            <input type="text" class="form-control" id="name" name="name" required placeholder="เช่น การป้องกัน">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">คำอธิบาย</label>
+                            <input type="text" class="form-control" id="description" name="description" placeholder="รายละเอียดเกี่ยวกับหมวดหมู่">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-plus"></i> เพิ่มหมวดหมู่
+                    </button>
+                </form>
+            </div>
+
+            <!-- Categories List -->
+            <div class="categories-table-wrapper">
+                {% if categories %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> ID</th>
+                            <th><i class="fas fa-tag"></i> ชื่อหมวดหมู่</th>
+                            <th><i class="fas fa-align-left"></i> คำอธิบาย</th>
+                            <th><i class="fas fa-cogs"></i> ดำเนินการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories %}
+                        <tr>
+                            <td>#{{ category.id }}</td>
+                            <td>
+                                <span class="category-badge">{{ category.name }}</span>
+                            </td>
+                            <td>{{ category.description }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('delete_category', category_id=category.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn-delete" onclick="return confirm('ต้องการลบหมวดหมู่นี้หรือไม่?');">
+                                        <i class="fas fa-trash-alt"></i> ลบ
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>ยังไม่มีหมวดหมู่ เพิ่มหมวดหมู่ใหม่เพื่อเริ่มต้น</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
